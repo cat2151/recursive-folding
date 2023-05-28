@@ -11,13 +11,13 @@ Obsidianの `plugins` 配下に配置してください。
 
 ## このプラグインができることはなに？
 - いくつかのコマンドが使えるようになります :
-	- 便利な折りたたみ/展開（fold/unfold）。
+	- 便利な折りたたみ/展開（fold/unfold） `Toggle Fold Recursive` 。
 		- 再帰的。
 		- toggle。
 		- 自動範囲選択。
 			- 範囲選択済みならそれが対象。
-	- 現在の階層の範囲選択。
-	- toggleでない明示的なfoldとunfold。
+	- 現在の階層の範囲選択 `Select Header or List` 。
+	- toggleでない明示的なfold `Fold Selection Recursive` と unfold `Collapse Selection` 。
 - イメージの説明 :
 	- 既存アプリや機能に例えると :
 		- Dynalistの `CTRL + SHIFT + .` のような折りたたみ/展開ができます。
