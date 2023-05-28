@@ -44,9 +44,9 @@ export default class RecursiveFolding extends Plugin {
 				// 仮説、h1～h6の行の次に、非h1～h6行があればOK（空行でもよい）。
 				//      なければ不具合発生。
 				// 対策案、h1～h6行の直後にh1～h6を配置したい場合、空行を挟んでおく
-				console.log(editor.getCursor());
-				console.log(editor.somethingSelected());
-				console.log(editor.listSelections());
+				if (this.isDebugMode()) console.log(editor.getCursor());
+				if (this.isDebugMode()) console.log(editor.somethingSelected());
+				if (this.isDebugMode()) console.log(editor.listSelections());
 			}
 		});
 
@@ -60,6 +60,10 @@ export default class RecursiveFolding extends Plugin {
 		});
 	}
 
+	isDebugMode(): boolean {
+		return false;
+	}
+
 	toggleFoldRecursiveAutoSelect(editor: Editor, view: MarkdownView): void {
 		const isSelected = editor.somethingSelected();
 		const selections0 = editor.listSelections();
@@ -68,9 +72,9 @@ export default class RecursiveFolding extends Plugin {
 		// 注意、ここでposとselectionが変化する
 		const isFolded = this.isFolded_by_pos_or_selection(editor, view);
 		if (isFolded) {
-			console.log("toggleFoldRecursiveAutoSelect 現在の階層は折りたたまれています");
+			if (this.isDebugMode()) console.log("toggleFoldRecursiveAutoSelect 現在の階層は折りたたまれています");
 		} else {
-			console.log("toggleFoldRecursiveAutoSelect 現在の階層は折りたたまれていません");
+			if (this.isDebugMode()) console.log("toggleFoldRecursiveAutoSelect 現在の階層は折りたたまれていません");
 		}
 		// isFoldedで変化したselectionsとposを復帰する
 		if (isSelected) {
@@ -113,7 +117,7 @@ export default class RecursiveFolding extends Plugin {
 		const y0 = this.getCursorY(editor, view);
 		const y1 = this.getLayerGroupEnd(editor, view, y0);
 		if (y0 == y1) {
-			console.log("selectCurrentLayer 選べるのは現在行の1行しかありません")
+			if (this.isDebugMode()) console.log("selectCurrentLayer 選べるのは現在行の1行しかありません")
 			return;
 		}
 		editor.setSelection({ line: y0, ch: 0 }, { line: y1, ch: 0 });
@@ -127,15 +131,15 @@ export default class RecursiveFolding extends Plugin {
 
 	collapseSelection(editor: Editor, view: MarkdownView): void {
 		const sel = this.get_y0y1_fromSelection_forFoldCollapse(editor, view);
-		console.log("選択範囲をcollapseします");
-		console.log(sel);
+		if (this.isDebugMode()) console.log("選択範囲をcollapseします");
+		if (this.isDebugMode()) console.log(sel);
 		this.collapse_y0y1(editor, view, sel.y0, sel.y1);
 	}
 
 	foldSelectionRecursive(editor: Editor, view: MarkdownView): void {
 		const sel = this.get_y0y1_fromSelection_forFoldCollapse(editor, view);
-		console.log("選択範囲をcollapseしてfoldします");
-		console.log(sel);
+		if (this.isDebugMode()) console.log("選択範囲をcollapseしてfoldします");
+		if (this.isDebugMode()) console.log(sel);
 		this.collapse_y0y1(editor, view, sel.y0, sel.y1);
 		// 意図。一度collapseすることで、すべてtoggleでfold可能とする。
 		this.toggleFold_y0y1(editor, view, sel.y0, sel.y1);
@@ -148,20 +152,20 @@ export default class RecursiveFolding extends Plugin {
 		const y0 = Math.min(yAnchor, yHead);
 		let y1 = Math.max(yAnchor, yHead);
 		if (y0 < y1) y1--; // endの1行前までをfold/collapseの対象にする
-		console.log("get_y0y1_fromSelection y0[" + y0 + "] y1[" + y1 + "]");
+		if (this.isDebugMode()) console.log("get_y0y1_fromSelection y0[" + y0 + "] y1[" + y1 + "]");
 		return { y0: y0, y1: y1 };
 	}
 
 	collapse_y0y1(editor: Editor, view: MarkdownView, y0: number, y1: number): void {
 		for (let y = y1; y >= y0; y--) { // この順番にすると成功した
-			console.log("collapseします y[" + y + "]");
+			if (this.isDebugMode()) console.log("collapseします y[" + y + "]");
 			this.setCursorY(editor, view, y);
 		}
 	}
 
 	toggleFold_y0y1(editor: Editor, view: MarkdownView, y0: number, y1: number): void {
 		for (let y = y1; y >= y0; y--) {
-			console.log("foldします y[" + y + "]");
+			if (this.isDebugMode()) console.log("foldします y[" + y + "]");
 			this.setCursorY(editor, view, y);
 			editor.exec('toggleFold');
 		}
@@ -172,13 +176,13 @@ export default class RecursiveFolding extends Plugin {
 		if (y0 == editor.lastLine()) return y0 + 1; // 最終行ならその次を示して早期リターン
 		for (let y = y0 + 1; y < editor.lastLine(); y++) {
 			const layerNow = this.getLayerByY(editor, view, y);
-			console.log("getLayerGroupEnd y[" + y + "] layer0[" + layer0 + "] to layerNow[" + layerNow + "]");
+			if (this.isDebugMode()) console.log("getLayerGroupEnd y[" + y + "] layer0[" + layer0 + "] to layerNow[" + layerNow + "]");
 			if (layerNow <= layer0) {
-				console.log("getLayerGroupEnd y[" + y + "] がendです");
+				if (this.isDebugMode()) console.log("getLayerGroupEnd y[" + y + "] がendです");
 				return y;
 			}
 		}
-		console.log("getLayerGroupEnd 最後の行の次がendです");
+		if (this.isDebugMode()) console.log("getLayerGroupEnd 最後の行の次がendです");
 		return editor.lastLine() + 1;
 	}
 
@@ -243,15 +247,15 @@ export default class RecursiveFolding extends Plugin {
 		const afterY = this.getCursorY(editor, view);
 		this.goPreLineByGoUpRepeat(editor, view); // これがないとcollapse後にカーソルが想定外の場所に飛んでしまった
 
-		console.log("isFolded afterY[" + afterY + "] y0+1[" + (y0 + 1) + "]");
+		if (this.isDebugMode()) console.log("isFolded afterY[" + afterY + "] y0+1[" + (y0 + 1) + "]");
 		if (afterY > y0 + 1) {
-			console.log("isFolded 次の行より先にいったので、folded");
+			if (this.isDebugMode()) console.log("isFolded 次の行より先にいったので、folded");
 			return true;
 		} else if (afterY == y0 + 1) {
-			console.log("isFolded 次の行にいったので、not folded");
+			if (this.isDebugMode()) console.log("isFolded 次の行にいったので、not folded");
 			return false;
 		} else {
-			console.log("isFolded 想定外です");
+			if (this.isDebugMode()) console.log("isFolded 想定外です");
 			return true;
 		}
 	}
@@ -261,9 +265,9 @@ export default class RecursiveFolding extends Plugin {
 		const y0 = this.getCursorY(editor, view);
 		if (y0 == editor.lastLine()) return;
 		for (let i = 0; i < 256; i++) { // 256行以上の折り返しを扱うことはない想定
-			console.log("goNextLineByGoDownRepeat before y[" + this.getCursorY(editor, view) + "]");
+			if (this.isDebugMode()) console.log("goNextLineByGoDownRepeat before y[" + this.getCursorY(editor, view) + "]");
 			editor.exec('goDown');
-			console.log("goNextLineByGoDownRepeat after  y[" + this.getCursorY(editor, view) + "]");
+			if (this.isDebugMode()) console.log("goNextLineByGoDownRepeat after  y[" + this.getCursorY(editor, view) + "]");
 			const afterY = this.getCursorY(editor, view);
 			if (afterY > y0) {
 				this.setCursorY(editor, view, this.getCursorY(editor, view)); // これがないとnote末尾でのfold/collapseでカーソルが想定外の場所に移動してしまった
