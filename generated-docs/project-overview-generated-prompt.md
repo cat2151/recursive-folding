@@ -1,4 +1,4 @@
-Last updated: 2025-11-10
+Last updated: 2025-11-11
 
 
 # プロジェクト概要生成プロンプト（来訪者向け）
@@ -198,4 +198,4 @@ versions.json
 
 
 ---
-Generated at: 2025-11-10 08:30:01 JST
+Generated at: 2025-11-11 07:03:16 JST

@@ -1,4 +1,4 @@
-Last updated: 2025-11-10
+Last updated: 2025-11-11
 
 # 開発状況生成プロンプト（開発者向け）
 
@@ -221,15 +221,19 @@ Last updated: 2025-11-10
 
 ## 最近の変更（過去7日間）
 ### コミット履歴:
+3cdb552 Update project summaries (overview & development status) [auto]
 a1a3917 github-actionsリポジトリの共通ワークフローを導入
 
 ### 変更されたファイル:
 .github/workflows/call-daily-project-summary.yml
 .github/workflows/call-issue-note.yml
 .github/workflows/call-translate-readme.yml
-.github/workflows/release.yaml
 README.md
+generated-docs/development-status-generated-prompt.md
+generated-docs/development-status.md
+generated-docs/project-overview-generated-prompt.md
+generated-docs/project-overview.md
 
 
 ---
-Generated at: 2025-11-10 08:30:01 JST
+Generated at: 2025-11-11 07:03:17 JST
